@@ -1,1 +1,0 @@
-# iecc-logos-cg-autobiography
