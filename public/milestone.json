@@ -1,0 +1,70 @@
+[
+    {
+        "title": "Start",
+        "description": "Lets start halfway...",
+        "image": [
+            "./img/1_me_birthday.jpg", 
+            "./img/2_personal_pic_high_school.jpg",
+            "./img/3_revisit_tor_2018_costco.jpg" 
+        ]
+    },
+    {
+        "title": "High school",
+        "description": "A young and innocent time in my life.",
+        "image": [
+            "./img/4a_hs_pic1.jpg",
+            "./img/4b_hs_grad.jpg",
+            "./img/4c_hs_pic2.jpg"
+        ]
+    },
+    {
+        "title": "After university",
+        "description": "Learning to find myself in new stage of life, a new look in life, a reborn identity with a new fellowship, and ...",
+        "image": [
+            "./img/5_uw_grad_2012.jpg", 
+            "./img/6_personal_self_pic_new_look.jpg", 
+            "./img/7a_rhccc_fellowship.jpg", 
+            "./img/7b_rhccc_baptism.jpg",
+            "./img/8a_mccc_fellowship_1.jpg",
+            "./img/8b_mccc_fellowship_2.jpg"
+        ]
+    },
+    {
+        "title": "Experimenting life",
+        "description": "...into new hobbies and passions.",
+        "image": [
+            "./img/9_music_baking.jpg", 
+            "./img/10_personal_art_believe.jpg",
+            "./img/11_personal_art_faith.jpg",
+            "./img/12_personal_art_dog.jpg",
+            "./img/13_personal_art_minion.jpg",
+            "./img/14_personal_self_pic_post_undergrad.jpg"
+        ]
+    },
+    {
+        "title": "Leaving home",
+        "description": "Venturing into new unknowns - revealing a hidden passion from a spontaneous trip and leaving my comfort abode to a place of my roots.",
+        "image": [
+            "./img/15_sf_boba_guys.jpg", 
+            "./img/16_sf_facebook.jpg",
+            "./img/17_sf_instagram.jpg",
+            "./img/18_sf_golden_gate_bridge.jpg",
+            "./img/19_pic_farewell_cake.jpg",
+            "./img/20_pic_farewell_pharm.jpg"
+        ]
+    },
+    {
+        "title": "HK, Italy, and beyond",
+        "description": "From the past 10 years and onwards to a riveting future...",
+        "image": [
+            "./img/21a_island_ecc_cia_cg.jpg", 
+            "./img/21b_island_ecc_iglee_cg.jpg",
+            "./img/21c_island_ecc_agape_cg.jpg",
+            "./img/22a_ark_2018_john.jpg",
+            "./img/22b_ark_2019_jeremiah.jpg",
+            "./img/23a_italy_1a_day.jpg",
+            "./img/23b_italy_1b_night.jpg",
+            "./img/24_italy_2.jpg"
+        ]
+    }
+]

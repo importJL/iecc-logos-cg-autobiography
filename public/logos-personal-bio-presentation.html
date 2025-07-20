@@ -1,0 +1,654 @@
+<script type="text/javascript">
+  var gk_isXlsx = false;
+  var gk_xlsxFileLookup = {};
+  var gk_fileData = {};
+  function filledCell(cell) {
+    return cell !== "" && cell != null;
+  }
+  function loadFileData(filename) {
+    if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+      try {
+        var workbook = XLSX.read(gk_fileData[filename], { type: "base64" });
+        var firstSheetName = workbook.SheetNames[0];
+        var worksheet = workbook.Sheets[firstSheetName];
+
+        // Convert sheet to JSON to filter blank rows
+        var jsonData = XLSX.utils.sheet_to_json(worksheet, {
+          header: 1,
+          blankrows: false,
+          defval: "",
+        });
+        // Filter out blank rows (rows where all cells are empty, null, or undefined)
+        var filteredData = jsonData.filter((row) => row.some(filledCell));
+
+        // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+        var headerRowIndex = filteredData.findIndex(
+          (row, index) =>
+            row.filter(filledCell).length >=
+            filteredData[index + 1]?.filter(filledCell).length
+        );
+        // Fallback
+        if (headerRowIndex === -1 || headerRowIndex > 25) {
+          headerRowIndex = 0;
+        }
+
+        // Convert filtered JSON back to CSV
+        var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+        csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+        return csv;
+      } catch (e) {
+        console.error(e);
+        return "";
+      }
+    }
+    return gk_fileData[filename] || "";
+  }
+</script>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Autobiography Timeline</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Embedded Tailwind CSS -->
+    <style>
+      /* Tailwind CSS generated with: npx tailwindcss -i styles.css -o output.css --minify */
+      /* Sample CSS based on used classes; replace with your output.css */
+      .min-h-screen {
+        min-height: 100vh;
+      }
+      .flex {
+        display: flex;
+      }
+      .flex-row {
+        flex-direction: row;
+      }
+      .flex-col {
+        flex-direction: column;
+      }
+      .items-center {
+        align-items: center;
+      }
+      .justify-center {
+        justify-content: center;
+      }
+      .justify-around {
+        justify-content: space-around;
+      }
+      .p-8 {
+        padding: 2rem;
+      }
+      .mb-4 {
+        margin-bottom: 1rem;
+      }
+      .mt-2 {
+        margin-top: 0.5rem;
+      }
+      .w-full {
+        width: 100%;
+      }
+      .w-8 {
+        width: 2rem;
+      }
+      .w-6 {
+        width: 1.5rem;
+      }
+      .w-4 {
+        width: 1rem;
+      }
+      .h-screen {
+        height: 100vh;
+      }
+      .h-16 {
+        height: 4rem;
+      }
+      .h-6 {
+        height: 1.5rem;
+      }
+      .h-4 {
+        height: 1rem;
+      }
+      .h-0\.5 {
+        height: 0.125rem;
+      }
+      .text-3xl {
+        font-size: 2.875rem;
+        line-height: 2.5rem;
+      }
+      .text-sm {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+      }
+      .font-bold {
+        font-weight: 700;
+      }
+      .text-center {
+        text-align: center;
+      }
+      .text-gray-900 {
+        --tw-text-opacity: 1;
+        color: rgb(17 24 39 / var(--tw-text-opacity));
+      }
+      .text-gray-100 {
+        --tw-text-opacity: 1;
+        color: rgb(243 244 246 / var(--tw-text-opacity));
+      }
+      .text-gray-800 {
+        --tw-text-opacity: 1;
+        color: rgb(31 41 55 / var(--tw-text-opacity));
+      }
+      .text-gray-200 {
+        --tw-text-opacity: 1;
+        color: rgb(229 231 235 / var(--tw-text-opacity));
+      }
+      .bg-gray-100 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+      }
+      .bg-gray-900 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(17 24 39 / var(--tw-bg-opacity));
+      }
+      .bg-white {
+        --tw-bg-opacity: 1;
+        background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+      }
+      .bg-gray-800 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(31 41 55 / var(--tw-bg-opacity));
+      }
+      .bg-gray-300 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(209 213 219 / var(--tw-bg-opacity));
+      }
+      .bg-gray-600 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(75 85 99 / var(--tw-bg-opacity));
+      }
+      .bg-blue-500 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(59 130 246 / var(--tw-bg-opacity));
+      }
+      .bg-blue-700 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(29 78 216 / var(--tw-bg-opacity));
+      }
+      .bg-blue-300 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(147 197 253 / var(--tw-bg-opacity));
+      }
+      .bg-blue-400 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(96 165 250 / var(--tw-bg-opacity));
+      }
+      .rounded-full {
+        border-radius: 9999px;
+      }
+      .rounded-lg {
+        border-radius: 0.5rem;
+      }
+      .shadow-md {
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+          0 2px 4px -2px rgb(0 0 0 / 0.1);
+      }
+      .fixed {
+        position: fixed;
+      }
+      .top-0 {
+        top: 0;
+      }
+      .left-0 {
+        left: 0;
+      }
+      .top-4 {
+        top: 1rem;
+      }
+      .right-4 {
+        right: 1rem;
+      }
+      .overflow-y-scroll {
+        overflow-y: scroll;
+      }
+      .snap-y {
+        scroll-snap-type: y var(--tw-scroll-snap-strictness);
+      }
+      .snap-mandatory {
+        --tw-scroll-snap-strictness: mandatory;
+      }
+      .snap-start {
+        scroll-snap-align: start;
+      }
+      .cursor-pointer {
+        cursor: pointer;
+      }
+      .max-w-prose {
+        max-width: 65ch;
+      }
+      .max-w-\[100px\] {
+        max-width: 100px;
+      }
+      .truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .relative {
+        position: relative;
+      }
+      .absolute {
+        position: absolute;
+      }
+      .inset-\[-4px\] {
+        top: -4px;
+        bottom: -4px;
+        left: -4px;
+        right: -4px;
+      }
+      .pt-16 {
+        padding-top: 4rem;
+      }
+      .z-10 {
+        z-index: 10;
+      }
+      .opacity-50 {
+        opacity: 0.5;
+      }
+      .opacity-100 {
+        opacity: 1;
+      }
+      .font-roboto {
+        font-family: Roboto, sans-serif;
+      }
+      [className="w-6 h-6 text-gray-200"] {
+        color: #e5e7eb;
+      }
+      .dark .dark\:bg-gray-900 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(17 24 39 / var(--tw-bg-opacity));
+      }
+      .dark .dark\:bg-gray-800 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(31 41 55 / var(--tw-bg-opacity));
+      }
+      .dark .dark\:bg-gray-600 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(75 85 99 / var(--tw-bg-opacity));
+      }
+      .dark .dark\:text-gray-100 {
+        --tw-text-opacity: 1;
+        color: rgb(243 244 246 / var(--tw-text-opacity));
+      }
+      .dark .dark\:bg-blue-300 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(147 197 253 / var(--tw-bg-opacity));
+      }
+      .dark .dark\:bg-blue-400 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(96 165 250 / var(--tw-bg-opacity));
+      }
+      .dark
+        .dark\:bg-\[radial-gradient\(circle\,rgba\(255\,255\,255\,0\.3\)_10\%\,transparent_70\%\)\] {
+        background-image: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.3) 10%,
+          transparent 70%
+        );
+      }
+      @media (prefers-color-scheme: dark) {
+        .dark\:bg-gray-900 {
+          --tw-bg-opacity: 1;
+          background-color: rgb(17 24 39 / var(--tw-bg-opacity));
+        }
+        .dark\:bg-gray-800 {
+          --tw-bg-opacity: 1;
+          background-color: rgb(31 41 55 / var(--tw-bg-opacity));
+        }
+        .dark\:bg-gray-600 {
+          --tw-bg-opacity: 1;
+          background-color: rgb(75 85 99 / var(--tw-bg-opacity));
+        }
+        .dark\:text-gray-100 {
+          --tw-text-opacity: 1;
+          color: rgb(243 244 246 / var(--tw-text-opacity));
+        }
+        .dark\:bg-blue-300 {
+          --tw-bg-opacity: 1;
+          background-color: rgb(147 197 253 / var(--tw-bg-opacity));
+        }
+        .dark\:bg-blue-400 {
+          --tw-bg-opacity: 1;
+          background-color: rgb(96 165 250 / var(--tw-bg-opacity));
+        }
+        .dark\:bg-\[radial-gradient\(circle\,rgba\(255\,255\,255\,0\.3\)_10\%\,transparent_70\%\)\] {
+          background-image: radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.3) 10%,
+            transparent 70%
+          );
+        }
+      }
+    </style>
+  </head>
+  <body class="font-roboto">
+    <div id="root"></div>
+    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+      const { useState, useEffect, useRef } = React;
+
+      // MilestoneNode Component
+      const MilestoneNode = ({ isCurrent }) => {
+        return (
+          <div className="relative w-6 h-6 flex items-center justify-center">
+            {isCurrent && (
+              <div className="absolute inset-[-4px] bg-[radial-gradient(circle,rgba(0,0,0,0.3)_10%,transparent_70%)] dark:bg-[radial-gradient(circle,rgba(255,255,255,0.3)_10%,transparent_70%)]"></div>
+            )}
+            <div
+              className={`w-4 h-4 rounded-full ${
+                isCurrent ? "bg-blue-700" : "bg-blue-500"
+              } dark:${isCurrent ? "bg-blue-300" : "bg-blue-400"}`}
+            ></div>
+          </div>
+        );
+      };
+
+      // Timeline Component
+      const Timeline = ({ milestones, currentIndex, onNodeClick }) => {
+        return (
+          <div className="fixed top-0 left-0 w-full h-16 flex flex-row items-center justify-around bg-white dark:bg-gray-800">
+            {milestones.map((milestone, index) => (
+              <React.Fragment key={index}>
+                <div
+                  className="flex flex-col items-center cursor-pointer"
+                  onClick={() => onNodeClick(index)}
+                >
+                  <MilestoneNode isCurrent={index === currentIndex} />
+                  <span
+                    className={`mt-2 text-sm text-center max-w-[100px] truncate ${
+                      index === currentIndex ? "opacity-100" : "opacity-50"
+                    }`}
+                  >
+                    {milestone.title}
+                  </span>
+                </div>
+                {index < milestones.length - 1 && (
+                  <div className="w-8 h-0.5 bg-gray-300 dark:bg-gray-600 self-center"></div>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+        );
+      };
+
+      // App Component
+      const App = () => {
+        const [theme, setTheme] = useState("light");
+        const sectionRefs = useRef([]);
+        const [currentIndex, setCurrentIndex] = useState(0);
+        const [milestones, setMilestones] = useState([]);
+
+        useEffect(() => {
+          fetch("milestone.json")
+            .then((res) => res.json())
+            .then((data) => setMilestones(data))
+            .catch((err) => {
+              console.error("Failed to load milestone.json", err);
+              setMilestones([]);
+            });
+        }, []);
+
+        useEffect(() => {
+          document.documentElement.classList.toggle("dark", theme === "dark");
+        }, [theme]);
+
+        useEffect(() => {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  const index = sectionRefs.current.findIndex(
+                    (el) => el === entry.target
+                  );
+                  setCurrentIndex(index);
+                }
+              });
+            },
+            { threshold: 0.5 }
+          );
+
+          sectionRefs.current.forEach((el) => {
+            if (el) observer.observe(el);
+          });
+
+          return () => {
+            sectionRefs.current.forEach((el) => {
+              if (el) observer.unobserve(el);
+            });
+          };
+        }, []);
+
+        useEffect(() => {
+          const handleKeyDown = (event) => {
+            if (event.key === "ArrowLeft" && currentIndex > 0) {
+              setCurrentIndex(currentIndex - 1);
+              sectionRefs.current[currentIndex - 1].scrollIntoView({
+                behavior: "smooth",
+              });
+            } else if (
+              event.key === "ArrowRight" &&
+              currentIndex < milestones.length - 1
+            ) {
+              setCurrentIndex(currentIndex + 1);
+              sectionRefs.current[currentIndex + 1].scrollIntoView({
+                behavior: "smooth",
+              });
+            }
+          };
+
+          window.addEventListener("keydown", handleKeyDown);
+          return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+          };
+        }, [currentIndex, milestones.length]);
+
+        const scrollToSection = (index) => {
+          setCurrentIndex(index);
+          sectionRefs.current[index].scrollIntoView({ behavior: "smooth" });
+        };
+
+        return (
+          <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+            <div
+              className="fixed top-4 right-4 cursor-pointer z-10"
+              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            >
+              {theme === "light" ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-6 h-6 text-gray-800"
+                >
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-6 h-6 text-gray-200"
+                >
+                  <circle cx="12" cy="12" r="5"></circle>
+                  <line x1="12" y1="1" x2="12" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="23"></line>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                  <line x1="1" y1="12" x2="3" y2="12"></line>
+                  <line x1="21" y1="12" x2="23" y2="12"></line>
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+              )}
+            </div>
+            <Timeline
+              milestones={milestones}
+              currentIndex={currentIndex}
+              onNodeClick={scrollToSection}
+            />
+            <div className="snap-y snap-mandatory overflow-y-scroll h-screen pt-16">
+              {milestones.map((milestone, index) => (
+                <section
+                  key={index}
+                  ref={(el) => (sectionRefs.current[index] = el)}
+                  id={`milestone${index}`}
+                  className="h-screen snap-start flex flex-col justify-center items-center p-8"
+                >
+                  <h2 className="text-3xl font-bold mb-4" style={{ fontSize: "2.875rem" }}>{milestone.title}</h2>
+                  {/* Carousel for array of images */}
+                  {Array.isArray(milestone.image) && milestone.image.length > 0 ? (
+                    <Carousel images={milestone.image} />
+                  ) : milestone.image ? (
+                    <img
+                      src={milestone.image}
+                      alt={milestone.title}
+                      className="mb-4 rounded-lg shadow-md"
+                    />
+                  ) : (
+                    <div className="mb-4 w-32 h-32 bg-gray-300 rounded-lg flex items-center justify-center text-gray-600">
+                      No image
+                    </div>
+                  )}
+                  <p className="max-w-prose text-center">
+                    {milestone.description}
+                  </p>
+                </section>
+              ))}
+            </div>
+          </div>
+        );
+      };
+
+      // Carousel component
+      function Carousel({ images }) {
+        const [offset, setOffset] = React.useState(0);
+        const containerRef = React.useRef(null);
+
+        // Increase size by 1.5x: width=840px, height=472px
+        const carouselWidth = 840;
+        const carouselHeight = 472;
+
+        // Duplicate images for seamless looping
+        const extendedImages = [...images, ...images];
+
+        // Calculate total scrollable width for seamless loop
+        const totalWidth = images.length * carouselWidth;
+
+        React.useEffect(() => {
+          setOffset(0); // Always start at the first image on mount
+          const interval = setInterval(() => {
+            setOffset((prev) => {
+              if (prev >= totalWidth) return 0;
+              return prev + 1.5;
+            });
+          }, 30);
+
+          return () => clearInterval(interval);
+        }, [totalWidth, images.length]);
+
+        // Catchy filler: animated gradient bar between images
+        return (
+          <div
+            ref={containerRef}
+            style={{
+              overflow: "hidden",
+              width: `${carouselWidth}px`,
+              height: `${carouselHeight}px`,
+              marginBottom: "1rem",
+              position: "relative",
+              borderRadius: "12px",
+              padding: "4px",
+              background: "linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3, #54a0ff)",
+              backgroundSize: "400% 400%",
+              animation: "gradientShift 3s ease infinite",
+            }}
+          >
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                borderRadius: "8px",
+                overflow: "hidden",
+                background: "#e5e7eb",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.1)",
+              }}
+            >
+            <div
+              style={{
+                display: "flex",
+                transition: "transform 0.1s linear",
+                transform: `translateX(-${offset}px)`,
+              }}
+            >
+              {extendedImages.map((src, idx) => (
+                <React.Fragment key={idx}>
+                  <img
+                    src={src}
+                    alt={`milestone-img-${idx}`}
+                    style={{
+                      width: `${carouselWidth}px`,
+                      height: `${carouselHeight}px`,
+                      objectFit: "cover",
+                      margin: 0,
+                      background: "#222",
+                      display: "block",
+                    }}
+                  />
+                  {/* 2px space between images, more visible */}
+                  {idx < extendedImages.length - 1 && (
+                    <div
+                      style={{
+                        width: "2px",
+                        height: `${carouselHeight}px`,
+                        background: "#d1d5db", // Tailwind bg-gray-300, more visible than bg-gray-100
+                      }}
+                    />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+            </div>
+            {/* Add keyframes for gradient animation */}
+            <style>
+              {`
+                @keyframes gradientShift {
+                  0% { background-position: 0% 50%; }
+                  50% { background-position: 100% 50%; }
+                  100% { background-position: 0% 50%; }
+                }
+                div[style*="linear-gradient"] {
+                  background-size: 400% 400%;
+                }
+              `}
+            </style>
+          </div>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+  </body>
+</html>
